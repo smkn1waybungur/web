@@ -1,218 +1,205 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>GuruWeb Gratis</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f3f6fb;
-            margin: 0;
-            padding: 30px;
-            color: #1f2937;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: auto;
-        }
-
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 5px 20px rgba(0,0,0,.08);
-        }
-
-        h1 {
-            margin-top: 0;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th, td {
-            border-bottom: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-        }
-
-        th {
-            background: #f8fafc;
-        }
-
-        .ok {
-            color: green;
-            font-weight: bold;
-        }
-
-        .error {
-            color: red;
-            font-weight: bold;
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0f766e">
+  <title>GuruWeb Gratis</title>
+  <link rel="stylesheet" href="css/app.css">
 </head>
-
 <body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">🎓</div>
+        <div>
+          <strong id="brandAppName">GuruWeb Gratis</strong>
+          <small>Tanpa hosting berbayar</small>
+        </div>
+      </div>
 
-<div class="container">
+      <nav class="nav">
+        <button class="nav-link active" data-page="dashboard">🏠 <span>Dashboard</span></button>
+        <button class="nav-link" data-page="siswa">👨‍🎓 <span>Data Siswa</span></button>
+        <button class="nav-link" data-page="kelas">🏫 <span>Data Kelas</span></button>
+        <button class="nav-link" data-page="pengaturan">⚙️ <span>Pengaturan</span></button>
+      </nav>
 
-    <div class="card">
+      <div class="sidebar-note">
+        <b>GuruWeb Gratis</b>
+        <span>Dibuat agar keterbatasan biaya tidak menjadi penghalang guru untuk berinovasi.</span>
+      </div>
+    </aside>
 
-        <h1>🎓 GuruWeb Gratis</h1>
+    <main class="main">
+      <header class="topbar">
+        <button class="icon-btn mobile-only" id="menuBtn" aria-label="Buka menu">☰</button>
+        <div>
+          <h1 id="pageTitle">Dashboard</h1>
+          <p id="schoolLine">Memuat identitas sekolah...</p>
+        </div>
+        <div class="connection" id="connectionBadge">⏳ Menghubungkan...</div>
+      </header>
 
-        <p>
-            Administrasi guru tanpa hosting berbayar
-        </p>
+      <div class="notice">
+        <b>Mode prototipe.</b> Gunakan data contoh terlebih dahulu. Autentikasi pengguna akan kita tambahkan sebelum dipakai untuk data nyata.
+      </div>
 
-        <div id="status">
-            Menghubungkan ke Google Sheets...
+      <section class="page active" id="page-dashboard">
+        <div class="cards">
+          <article class="stat-card">
+            <span>Total Siswa</span>
+            <strong id="statSiswa">0</strong>
+            <small>Data dari Google Sheets</small>
+          </article>
+          <article class="stat-card">
+            <span>Total Kelas</span>
+            <strong id="statKelas">0</strong>
+            <small>Kelas terdaftar</small>
+          </article>
+          <article class="stat-card">
+            <span>Siswa Aktif</span>
+            <strong id="statAktif">0</strong>
+            <small>Status aktif</small>
+          </article>
         </div>
 
-        <table id="tabel" style="display:none;">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Ringkasan Data</h2>
+              <p>Data terbaru yang dibaca langsung dari Google Sheets.</p>
+            </div>
+            <button class="btn btn-secondary" id="refreshBtn">↻ Muat ulang</button>
+          </div>
+          <div id="recentStudents"></div>
+        </div>
+      </section>
 
-            <thead>
+      <section class="page" id="page-siswa">
+        <div class="panel">
+          <div class="panel-head stack-mobile">
+            <div>
+              <h2>Data Siswa</h2>
+              <p>Tambah, edit, cari, dan hapus data siswa.</p>
+            </div>
+            <button class="btn btn-primary" id="addStudentBtn">+ Tambah Siswa</button>
+          </div>
+
+          <div class="toolbar">
+            <input id="searchInput" class="input" type="search" placeholder="Cari nama, NIS, atau kelas...">
+            <select id="classFilter" class="input">
+              <option value="">Semua kelas</option>
+            </select>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
                 <tr>
-                    <th>No</th>
-                    <th>NIS</th>
-                    <th>Nama</th>
-                    <th>JK</th>
-                    <th>Kelas</th>
-                    <th>Status</th>
+                  <th>No</th>
+                  <th>NIS</th>
+                  <th>Nama</th>
+                  <th>JK</th>
+                  <th>Kelas</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
                 </tr>
-            </thead>
+              </thead>
+              <tbody id="studentTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
-            <tbody id="dataSiswa"></tbody>
+      <section class="page" id="page-kelas">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Data Kelas</h2>
+              <p>Daftar kelas yang tersedia pada Google Sheets.</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>ID</th>
+                  <th>Nama Kelas</th>
+                  <th>Wali Kelas</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="classTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
-        </table>
+      <section class="page" id="page-pengaturan">
+        <div class="panel">
+          <h2>Pengaturan</h2>
+          <p class="muted">Identitas ini dibaca dari sheet <code>settings</code>.</p>
+          <div class="settings-grid">
+            <div><span>Nama Aplikasi</span><strong id="settingAppName">-</strong></div>
+            <div><span>Nama Sekolah</span><strong id="settingSchool">-</strong></div>
+            <div><span>Nama Guru</span><strong id="settingTeacher">-</strong></div>
+            <div><span>Versi</span><strong id="settingVersion">-</strong></div>
+          </div>
+          <div class="setup-help">
+            <b>Untuk guru yang menyalin aplikasi ini:</b>
+            <p>Ubah hanya <code>API_URL</code> pada file <code>js/config.js</code> agar mengarah ke Google Apps Script milik sendiri.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
 
+  <div class="modal-backdrop" id="studentModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 id="modalTitle">Tambah Siswa</h2>
+        <button class="icon-btn" id="closeModalBtn">✕</button>
+      </div>
+      <form id="studentForm">
+        <input type="hidden" id="studentId">
+        <div class="form-grid">
+          <label>NIS
+            <input class="input" id="studentNis" required>
+          </label>
+          <label>Nama
+            <input class="input" id="studentName" required>
+          </label>
+          <label>Jenis Kelamin
+            <select class="input" id="studentGender" required>
+              <option value="">Pilih</option>
+              <option value="L">Laki-laki</option>
+              <option value="P">Perempuan</option>
+            </select>
+          </label>
+          <label>Kelas
+            <select class="input" id="studentClass" required></select>
+          </label>
+          <label>Status
+            <select class="input" id="studentStatus">
+              <option value="Aktif">Aktif</option>
+              <option value="Nonaktif">Nonaktif</option>
+            </select>
+          </label>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="cancelModalBtn">Batal</button>
+          <button type="submit" class="btn btn-primary" id="saveStudentBtn">Simpan</button>
+        </div>
+      </form>
     </div>
+  </div>
 
-</div>
+  <div class="toast" id="toast"></div>
 
-<script>
-
-const API_URL =
-    "https://script.google.com/macros/s/AKfycbwk0TzBgLOzXGEqGF4WWzmp2wRLhUK7vvJY39XwwvKNxsfVlleH9FfZg1Uakr2kS14SjQ/exec";
-
-
-async function ambilSiswa() {
-
-    const status =
-        document.getElementById("status");
-
-    try {
-
-        const response =
-            await fetch(
-                API_URL + "?action=siswa"
-            );
-
-        const hasil =
-            await response.json();
-
-
-        if (!hasil.success) {
-
-            throw new Error(
-                hasil.message
-            );
-
-        }
-
-
-        const siswa =
-            hasil.data || [];
-
-
-        status.innerHTML =
-            "✅ Terhubung ke Google Sheets — " +
-            siswa.length +
-            " siswa ditemukan.";
-
-        status.className =
-            "ok";
-
-
-        const tbody =
-            document.getElementById(
-                "dataSiswa"
-            );
-
-
-        siswa.forEach(
-            (item, index) => {
-
-                const row =
-                    document.createElement(
-                        "tr"
-                    );
-
-                row.innerHTML = `
-
-                    <td>
-                        ${index + 1}
-                    </td>
-
-                    <td>
-                        ${item.nis}
-                    </td>
-
-                    <td>
-                        ${item.nama}
-                    </td>
-
-                    <td>
-                        ${item.jk}
-                    </td>
-
-                    <td>
-                        ${item.kelas}
-                    </td>
-
-                    <td>
-                        ${item.status}
-                    </td>
-
-                `;
-
-                tbody.appendChild(
-                    row
-                );
-
-            }
-        );
-
-
-        document
-            .getElementById("tabel")
-            .style.display =
-            "table";
-
-
-    } catch (error) {
-
-        status.innerHTML =
-            "❌ Gagal terhubung: " +
-            error.message;
-
-        status.className =
-            "error";
-
-    }
-
-}
-
-
-ambilSiswa();
-
-</script>
-
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
