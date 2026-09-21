@@ -1,1 +1,218 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>GuruWeb Gratis</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f6fb;
+            margin: 0;
+            padding: 30px;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0,0,0,.08);
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border-bottom: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background: #f8fafc;
+        }
+
+        .ok {
+            color: green;
+            font-weight: bold;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>🎓 GuruWeb Gratis</h1>
+
+        <p>
+            Administrasi guru tanpa hosting berbayar
+        </p>
+
+        <div id="status">
+            Menghubungkan ke Google Sheets...
+        </div>
+
+        <table id="tabel" style="display:none;">
+
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>NIS</th>
+                    <th>Nama</th>
+                    <th>JK</th>
+                    <th>Kelas</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody id="dataSiswa"></tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+const API_URL =
+    "MASUKKAN_URL_APPS_SCRIPT_DI_SINI";
+
+
+async function ambilSiswa() {
+
+    const status =
+        document.getElementById("status");
+
+    try {
+
+        const response =
+            await fetch(
+                API_URL + "?action=siswa"
+            );
+
+        const hasil =
+            await response.json();
+
+
+        if (!hasil.success) {
+
+            throw new Error(
+                hasil.message
+            );
+
+        }
+
+
+        const siswa =
+            hasil.data || [];
+
+
+        status.innerHTML =
+            "✅ Terhubung ke Google Sheets — " +
+            siswa.length +
+            " siswa ditemukan.";
+
+        status.className =
+            "ok";
+
+
+        const tbody =
+            document.getElementById(
+                "dataSiswa"
+            );
+
+
+        siswa.forEach(
+            (item, index) => {
+
+                const row =
+                    document.createElement(
+                        "tr"
+                    );
+
+                row.innerHTML = `
+
+                    <td>
+                        ${index + 1}
+                    </td>
+
+                    <td>
+                        ${item.nis}
+                    </td>
+
+                    <td>
+                        ${item.nama}
+                    </td>
+
+                    <td>
+                        ${item.jk}
+                    </td>
+
+                    <td>
+                        ${item.kelas}
+                    </td>
+
+                    <td>
+                        ${item.status}
+                    </td>
+
+                `;
+
+                tbody.appendChild(
+                    row
+                );
+
+            }
+        );
+
+
+        document
+            .getElementById("tabel")
+            .style.display =
+            "table";
+
+
+    } catch (error) {
+
+        status.innerHTML =
+            "❌ Gagal terhubung: " +
+            error.message;
+
+        status.className =
+            "error";
+
+    }
+
+}
+
+
+ambilSiswa();
+
+</script>
+
+</body>
+</html>
